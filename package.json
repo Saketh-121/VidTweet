@@ -2,17 +2,20 @@
   "name": "vidtube",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+    "dev": "nodemon -r dotenv/config src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Saketh-121/Youtube-Twitter.git"
   },
   "author": "Saketh",
   "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "nodemon": "^3.1.9",
-    "prettier": "^3.5.0"
+  "bugs": {
+    "url": "https://github.com/Saketh-121/Youtube-Twitter/issues"
   },
+  "homepage": "https://github.com/Saketh-121/Youtube-Twitter#readme",
+  "description": "",
   "dependencies": {
     "@types/mongoose-aggregate-paginate-v2": "^1.0.12",
     "bcrypt": "^5.1.1",
@@ -24,5 +27,9 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.0",
     "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.1"
   }
 }

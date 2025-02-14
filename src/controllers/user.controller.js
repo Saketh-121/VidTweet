@@ -16,9 +16,9 @@ const registerUser = asyncHandler(async (req, res) => {
     // Step 2: Validation if all details have been sent correctly- not empty
 
     /*The below method requires many IF-ELSE, hence writing a better condition after 5 lines
-    if (fullName === '') {
+    if (fullName === '') 
         throw new ApiError(400, "Enter a fullName");
-    }*/
+    */
 
     if (
         [fullName, email, username, password].some((field) =>
@@ -41,10 +41,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // Step 4: check for images
 
+    if (req.files?.avatar[0]?.originalname === req.files?.coverImage[0]?.originalname) {
+        throw new ApiError(400, "Avatar and Cover image can't be same.")
+    }
+
     // req.files is given by multer, we might/not have it's access, hence use ? operator
     const avatarLocalPath = req.files?.avatar[0]?.path  //first property coz from here we can get the path
-    console.log(avatarLocalPath);
-
     const coverImageLocalPath = req.files?.coverImage[0]?.path
 
 
@@ -55,10 +57,15 @@ const registerUser = asyncHandler(async (req, res) => {
 
 
     // step 6: Upload to cloudinary, avatar ko check if upload properly
+
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
     if (!avatar) {
-        throw new ApiError(400, "Avatar file is required, upload failed on cloudinary");
+        throw new ApiError(500, "Unable to upload avatar");
+    }
+
+    if (!coverImage) {
+        throw new ApiError(500, "Unable to upload cover image")
     }
 
 
