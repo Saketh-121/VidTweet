@@ -10,7 +10,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // Step 1: Get user details from FrontEnd
     const { fullName, email, username, password } = req.body
-    console.log("email: ", email);
+    // console.log("email: ", email);
 
 
     // Step 2: Validation if all details have been sent correctly- not empty
@@ -41,14 +41,19 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // Step 4: check for images
 
-    if (req.files?.avatar[0]?.originalname === req.files?.coverImage[0]?.originalname) {
+    if (Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0 && req.files?.avatar[0]?.originalname === req.files?.coverImage[0]?.originalname) {
         throw new ApiError(400, "Avatar and Cover image can't be same.")
     }
 
     // req.files is given by multer, we might/not have it's access, hence use ? operator
-    const avatarLocalPath = req.files?.avatar[0]?.path  //first property coz from here we can get the path
-    const coverImageLocalPath = req.files?.coverImage[0]?.path
+    const avatarLocalPath = req.files?.avatar[0]?.path;
+    //const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
+
+    let coverImageLocalPath = null;    //above giving error, hence if-else thingy
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files.coverImage[0].path;
+    }
 
     // Step 5: Check for avatar, this is compulsory
     if (!avatarLocalPath) {
@@ -60,31 +65,44 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+
     if (!avatar) {
         throw new ApiError(500, "Unable to upload avatar");
     }
 
-    if (!coverImage) {
-        throw new ApiError(500, "Unable to upload cover image")
-    }
-
 
     // step 7: create a user object - create entry in db
-    const user = await User.create({
-        fullName,
-        avatar: avatar.url, //Pass only the url here, not the whole object
-        coverImage: coverImage?.url || "",
-        email,
-        password,
-        username: username.toLowerCase().trim()
-    })
+
+    let user;
+    //if coverImage exists, then enter If condition
+    if (coverImage) {
+        user = await User.create({
+            fullName,
+            avatar: avatar.url, //Pass only the url here, not the whole object
+            coverImage: coverImage?.url || "",
+            email,
+            password,
+            username: username.toLowerCase().trim()
+        })
+    }
+
+    else {
+        user = await User.create({
+            fullName,
+            avatar: avatar.url, //Pass only the url here, not the whole object,
+            coverImage: "",
+            email,
+            password,
+            username: username.toLowerCase().trim()
+        })
+    }
 
 
     // step 8: remove password and refresh token field from response; as this will go to the user
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
-        //by default all are selected itself, minus ke baaju whatever is written shows what shall be deseclected
     )
+    //by default all are selected itself, minus ke baaju whatever is written shows what shall be deseclected
 
 
     // step 9: Check for user response, if null hai or user is created
