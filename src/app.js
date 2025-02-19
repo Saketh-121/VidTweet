@@ -25,6 +25,7 @@ app.use(cookieParser()) // This is to access cookies from user's browser and be 
 // ************     Routes Import  **********
 
 import userRouter from "./routes/user.routes.js"
+import tweetRouter from "./routes/tweet.routes.js"
 
 
 
@@ -32,6 +33,7 @@ import userRouter from "./routes/user.routes.js"
 
 // Our URL becomes something like http://localhost:8000/api/v1/users/register
 app.use("/api/v1/users", userRouter)
+app.use("/api/v1/tweets", tweetRouter)
 
 
 

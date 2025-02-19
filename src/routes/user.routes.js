@@ -19,6 +19,8 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { verify } from "crypto";
 const router = Router()
 
+
+// Unsecure Routes, no verification required
 router.route("/register").post(
     upload.fields([{ name: "coverImage", maxCount: 1 }, { name: "avatar", maxCount: 1 }]),
     registerUser
