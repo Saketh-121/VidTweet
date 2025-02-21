@@ -1,4 +1,4 @@
-# Youtube-Twitter
+# VidTweet 
 
 This project integrates functionalities of YouTube and Twitter. It is designed to provide features such as user authentication, video uploading, and interaction with social media APIs.
 
